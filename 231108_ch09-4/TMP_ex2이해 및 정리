@@ -119,3 +119,17 @@ struct divide<int a, int b> {
 - `typename` 키워드는 주로 템플릿 내에 `typedef`를 사용하여 타입을 정의하는 경우에 사용된다. 
 - 구조체나 클래스 내부에서 `typedef`로 타입을 정의할 때 `typename`을 사용하면 컴파일러가 타입임을 명확하게 인식한다. 
 - 따라서 구조체나 클래스 내부에서 `typedef`로 타입을 정의할 때는 `typename`을 붙여주는 것이 좋은 습관이다.
+
+### 재귀 호출의 선택
+- _is_prime<N>을 호출하면 check_div<N, two>::result가 호출됩니다. 
+check_div 템플릿의 재귀 호출에서 check_div<N, typename add<d, one>::result>::result와 
+check_div<N, typename divide<N, two>::result>::result 중 어떤 것이 먼저 선택되는지 결정되는 것은 템플릿 인스턴스화의 규칙에 따라 결정됩니다.
+
+- 템플릿 인스턴스화에서 컴파일러는 가능한한 가장 특수한 (가장 구체적인) 버전을 선택하려고 노력합니다. 
+따라서 컴파일러는 check_div<N, typename divide<N, two>::result>::result가 
+check_div<N, typename add<d, one>::result>::result보다 더 특수한 경우로 간주할 것입니다.
+
+- 이 경우 check_div<N, typename divide<N, two>::result>::result는 N을 two로 나눈 결과를 사용하여 소수를 판별하며, 더 일반적인 경우입니다. 
+따라서 컴파일러는 이 버전을 먼저 선택합니다. 또한 이러한 선택은 재귀적으로 진행되며, 템플릿 인스턴스화가 가장 특수한 버전을 선택하는 규칙을 따릅니다.
+
+- 따라서 check_div<N, typename divide<N, two>::result>::result가 먼저 선택되며, 이를 통해 N을 two로 나눈 결과를 사용하여 소수 판별이 이루어집니다.
