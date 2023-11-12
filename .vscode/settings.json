@@ -8,6 +8,8 @@
         "xtree": "cpp",
         "ios": "cpp",
         "type_traits": "cpp",
-        "xutility": "cpp"
+        "xutility": "cpp",
+        "utility": "cpp",
+        "map": "cpp"
     }
 }
