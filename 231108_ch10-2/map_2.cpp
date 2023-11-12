@@ -62,8 +62,21 @@ void ex2() {
     search_and_print(pitcher_list, std::string("오승환"));
     search_and_print(pitcher_list, std::string("류현진"));
 }
+// 맵은 셋처럼 중복된 우런소를 허락하지 않는다. 이키 같은 키가 원소로 있다면, 나중에 오는 insert는 무시된다.
+void ex3() {
+    std::map<std::string, double> pitcher_list;
 
+    // 맵의 insert 함수는 std::pair 객체를 인자로 받습니다.
+    pitcher_list.insert(std::pair<std::string, double>("박세웅", 2.23));
+    pitcher_list.insert(std::pair<std::string, double>("박세웅", 2.93));    // 무시됨.
+
+    print_map(pitcher_list);
+
+    // 2.23 이 나올까 2.93 이 나올까?
+    std::cout << "박세웅 방어율은? :: " << pitcher_list["박세웅"] << std::endl;
+}
 int main() {
     // ex1();
-    ex2();
+    // ex2();
+    ex3();
 }
