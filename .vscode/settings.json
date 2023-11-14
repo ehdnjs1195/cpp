@@ -60,6 +60,7 @@
         "xlocnum": "cpp",
         "xloctime": "cpp",
         "xtr1common": "cpp",
-        "xhash": "cpp"
+        "xhash": "cpp",
+        "stack": "cpp"
     }
 }
