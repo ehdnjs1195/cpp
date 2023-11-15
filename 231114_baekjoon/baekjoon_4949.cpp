@@ -75,14 +75,16 @@ int main() {
     stack<char> ps;
 
     while(getline(cin,line)) {
-        if(line.at(0) == '.') break;    // 종료 조건
+        if(line.length() == 1 && line.at(0) == '.') break;    // 종료 조건
         // cout << "line: " << line << endl;
         for(auto ch : line) {
             if (ch == '(' || ch == '[') {
                 ps.push(ch);
+            } else if(ps.empty() && (ch == ')' || ch == ']')) {
+                ps.push(ch);
             } else if(!ps.empty() && ((ps.top() == '(' && ch == ')') || (ps.top() == '[' && ch == ']'))) {
                 ps.pop();
-            } 
+            }
         }
         
         if (ps.empty()) cout << "yes\n";
