@@ -1,8 +1,6 @@
 #include <iostream>
 #include <string>
 
-
-
 void u32string() {
     std::u32string u32_str = U"이건 UTF-32 문자열 입니다";  //실제 문자열 길이 17
     std::cout << u32_str.size() << std::endl;
@@ -33,8 +31,31 @@ void print_char_u8string() {
     }
     std::cout << "문자열 실제 길이는 : "  << len << std::endl;
 }
+void u16string() {
+    std::u16string u16_str = u"이건 UTF-16 문자열 입니다";
+    std::cout << u16_str.size() << std::endl;
+}
+void u16string_jaum_print() {
+    std::u16string u16_str = u"안녕하세용 모두에 코드에 오신 것을 환영합니다";
+    std::string jaum[] = {"ㄱ", "ㄲ", "ㄴ", "ㄷ", "ㄸ", "ㄹ", "ㅁ",
+                            "ㅂ", "ㅃ", "ㅅ", "ㅆ", "ㅇ", "ㅈ", "ㅉ",
+                            "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ"};
+
+    for (char16_t c : u16_str) {
+        // 유니코드 상에서 한글의 범위
+        if (!(0xAC00 <= c && c <= 0xD7A3)) {
+            continue;
+        }
+        // 한글은 AC00 부터 시작해서 한 초성당 총 0x24C 개 씩 있다.
+        int offset = c - 0xAC00;
+        int jaum_offset = offset / 0x24C;
+        std::cout << jaum[jaum_offset];
+    }
+}
 int main () {
     // u32string();
     // u8string();
-    print_char_u8string();
+    // print_char_u8string();
+    // u16string();
+    u16string_jaum_print();
 }

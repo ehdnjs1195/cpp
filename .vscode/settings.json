@@ -61,6 +61,14 @@
         "xloctime": "cpp",
         "xtr1common": "cpp",
         "xhash": "cpp",
-        "stack": "cpp"
+        "stack": "cpp",
+        "algorithm": "cpp",
+        "functional": "cpp",
+        "optional": "cpp",
+        "queue": "cpp",
+        "ranges": "cpp",
+        "span": "cpp",
+        "unordered_map": "cpp",
+        "unordered_set": "cpp"
     }
 }
