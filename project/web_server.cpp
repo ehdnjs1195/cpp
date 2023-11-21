@@ -24,7 +24,7 @@ int main(int argc, char ** argv){
 
     serv_addr.sin_family = AF_INET;  // 바인드할 때 씀. IPv4를 쓰겠다는 뜻
     serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-    serv_addr.sin_port = htons(7889);   // port번호
+    serv_addr.sin_port = htons(7989);   // port번호
 
     if(bind(serv_sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) == -1) {  // bind(). -1 반환은 bind 실패.
         printf("bind error\n"); 
@@ -38,7 +38,7 @@ int main(int argc, char ** argv){
     int recv_len = 0;
     while(1) {
         clnt_addr_size = sizeof(clnt_addr);
-        clnt_sock = accept(serv_sock, (struct sockaddr *)&clnt_addr, &clnt_addr_size);
+        clnt_sock = accept(serv_sock, (struct sockaddr *)&clnt_addr, (socklen_t *)&clnt_addr_size);
 
         // g_clnt_socks[g_clnt_count++] = clnt_sock;   
 
@@ -47,7 +47,7 @@ int main(int argc, char ** argv){
 
             printf("recv: ");
             for(int i=0; i<recv_len; i++){
-                printf("%02X", (unsigned char)buff[i]);
+                printf("%02X ", (unsigned char)buff[i]);
             }
             printf("\n");
         }
