@@ -3,14 +3,15 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "C:\\boost_1_83_0"
             ],
             "defines": [],
             "cStandard": "c17",
             "cppStandard": "gnu++14",
             "intelliSenseMode": "linux-gcc-x64",
             "configurationProvider": "ms-vscode.cmake-tools",
-            "compilerPath": "/usr/bin/gcc"
+            "compilerPath": "C:/MinGW/bin/g++.exe"
         }
     ],
     "version": 4

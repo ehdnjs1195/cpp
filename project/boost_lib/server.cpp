@@ -1,227 +1,52 @@
-//
-// chat_server.cpp
-// ~~~~~~~~~~~~~~~
-//
-// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
-//
-// Distributed under the Boost Software License, Version 1.0. (See accompanying
-// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
-//
-
-#include <cstdlib>
-#include <deque>
+#include <ctime>
 #include <iostream>
-#include <list>
-#include <memory>
-#include <set>
-#include <utility>
+#include <string>
 #include <boost/asio.hpp>
-#include "chat_message.hpp"
 
 using boost::asio::ip::tcp;
 
-//----------------------------------------------------------------------
-
-typedef std::deque<chat_message> chat_message_queue;
-
-//----------------------------------------------------------------------
-
-class chat_participant
+int main() 
 {
-public:
-  virtual ~chat_participant() {}
-  virtual void deliver(const chat_message& msg) = 0;
-};
+    try{
+        boost::asio::io_service io_service io_service;
 
-typedef std::shared_ptr<chat_participant> chat_participant_ptr;
+        tcp::endpoint endpoint(tcp::v4(), 13);          // 엔드 포인트 설정: IPv4, port번호
+        tcp::acceptor acceptor(io_service, endpoint);   // 
 
-//----------------------------------------------------------------------
+        std::cout << "Server started" << std::endl;
 
-class chat_room
-{
-public:
-  void join(chat_participant_ptr participant)
-  {
-    participants_.insert(participant);
-    for (auto msg: recent_msgs_)
-      participant->deliver(msg);
-  }
-
-  void leave(chat_participant_ptr participant)
-  {
-    participants_.erase(participant);
-  }
-
-  void deliver(const chat_message& msg)
-  {
-    recent_msgs_.push_back(msg);
-    while (recent_msgs_.size() > max_recent_msgs)
-      recent_msgs_.pop_front();
-
-    for (auto participant: participants_)
-      participant->deliver(msg);
-  }
-
-private:
-  std::set<chat_participant_ptr> participants_;
-  enum { max_recent_msgs = 100 };
-  chat_message_queue recent_msgs_;
-};
-
-//----------------------------------------------------------------------
-
-class chat_session
-  : public chat_participant,
-    public std::enable_shared_from_this<chat_session>
-{
-public:
-  chat_session(tcp::socket socket, chat_room& room)
-    : socket_(std::move(socket)),
-      room_(room)
-  {
-  }
-
-  void start()
-  {
-    room_.join(shared_from_this());
-    do_read_header();
-  }
-
-  void deliver(const chat_message& msg)
-  {
-    bool write_in_progress = !write_msgs_.empty();
-    write_msgs_.push_back(msg);
-    if (!write_in_progress)
-    {
-      do_write();
-    }
-  }
-
-private:
-  void do_read_header()
-  {
-    auto self(shared_from_this());
-    boost::asio::async_read(socket_,
-        boost::asio::buffer(read_msg_.data(), chat_message::header_length),
-        [this, self](boost::system::error_code ec, std::size_t /*length*/)
+        for(;;) 
         {
-          if (!ec && read_msg_.decode_header())
-          {
-            do_read_body();
-          }
-          else
-          {
-            room_.leave(shared_from_this());
-          }
-        });
-  }
+            const std::string message_to_send = "Hello From Server";
 
-  void do_read_body()
-  {
-    auto self(shared_from_this());
-    boost::asio::async_read(socket_,
-        boost::asio::buffer(read_msg_.body(), read_msg_.body_length()),
-        [this, self](boost::system::error_code ec, std::size_t /*length*/)
-        {
-          if (!ec)
-          {
-            room_.deliver(read_msg_);
-            do_read_header();
-          }
-          else
-          {
-            room_.leave(shared_from_this());
-          }
-        });
-  }
+            boost::asio::ip::tcp::iostream stream;
 
-  void do_write()
-  {
-    auto self(shared_from_this());
-    boost::asio::async_write(socket_,
-        boost::asio::buffer(write_msgs_.front().data(),
-          write_msgs_.front().length()),
-        [this, self](boost::system::error_code ec, std::size_t /*length*/)
-        {
-          if (!ec)
-          {
-            write_msgs_.pop_front();
-            if (!write_msgs_.empty())
+            std::cout << "check 1" << std::endl;
+
+            boost::system::error_code ec;
+            acceptor.accept(*stream.rdbuf(), ec);   // accept()함. stream 으로 readbuffer
+
+            std::cout << "check 2" << std::endl;
+
+            // acceptor로 인해 ec가 null 값이 아니고 값이 들어왔다면 클라이언트가 제대로 접속했다는 뜻이 됨.
+            if(!ec) //TODO: How to take care of multiple clients? Multi-threading?
             {
-              do_write();
+                // receive message from client 
+                std::string line;
+                std::getline(stream, line);     //
+                std::cout << line << std::endl;
+
+                // send message to client
+                stream << message_to_send;  // stream에 보낼 메세지 넘겨주기.
+                stream << std::endl;        // send std::endl to end getline of client
+
             }
-          }
-          else
-          {
-            room_.leave(shared_from_this());
-          }
-        });
-  }
-
-  tcp::socket socket_;
-  chat_room& room_;
-  chat_message read_msg_;
-  chat_message_queue write_msgs_;
-};
-
-//----------------------------------------------------------------------
-
-class chat_server
-{
-public:
-  chat_server(boost::asio::io_context& io_context,
-      const tcp::endpoint& endpoint)
-    : acceptor_(io_context, endpoint)
-  {
-    do_accept();
-  }
-
-private:
-  void do_accept()
-  {
-    acceptor_.async_accept(
-        [this](boost::system::error_code ec, tcp::socket socket)
-        {
-          if (!ec)
-          {
-            std::make_shared<chat_session>(std::move(socket), room_)->start();
-          }
-
-          do_accept();
-        });
-  }
-
-  tcp::acceptor acceptor_;
-  chat_room room_;
-};
-
-//----------------------------------------------------------------------
-
-int main(int argc, char* argv[])
-{
-  try
-  {
-    if (argc < 2)
+        }
+    } 
+    catch(std::exception& e) 
     {
-      std::cerr << "Usage: chat_server <port> [<port> ...]\n";
-      return 1;
+        std::cerr << e.what() << std::endl;
     }
 
-    boost::asio::io_context io_context;
-
-    std::list<chat_server> servers;
-    for (int i = 1; i < argc; ++i)
-    {
-      tcp::endpoint endpoint(tcp::v4(), std::atoi(argv[i]));
-      servers.emplace_back(io_context, endpoint);
-    }
-
-    io_context.run();
-  }
-  catch (std::exception& e)
-  {
-    std::cerr << "Exception: " << e.what() << "\n";
-  }
-
-  return 0;
+    return 0;
 }
