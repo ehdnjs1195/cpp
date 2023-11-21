@@ -6,11 +6,12 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <pthread.h>
-#include <malloc.h>
+// #include <malloc.h>
 
-#define PORT_NUM 8888	//포트번호
-#define BLOG_SIZE 5		//백로그 큐 사이즈
-#define MAX_MSG_LEN 256	//주고 받는 메시지 버퍼 크기도 매크로 상수로 정의함.
+#define IP_ADDR "127.0.0.1" //IP주소10.20.0.47
+#define PORT_NUM 8888	    //포트번호
+#define BLOG_SIZE 5		    //백로그 큐 사이즈
+#define MAX_MSG_LEN 256	    //주고 받는 메시지 버퍼 크기도 매크로 상수로 정의함.
 
 //대기 소켓을 생성하여 가동하는 부분을 함수로 만들기
 int SetTCPServer(short pnum, int blog);	//인자로 포트번호와 백로그 큐 크기를 전달함.
@@ -32,7 +33,7 @@ int SetTCPServer(short pnum, int blog) {
 	struct sockaddr_in servaddr = { 0, };	//서버 주소
 	servaddr.sin_family = AF_INET;
 	// servaddr.sin_addr = GetDefaultMyIP();
-	servaddr.sin_addr.s_addr = inet_addr("127.0.0.1");  
+	servaddr.sin_addr.s_addr = inet_addr(IP_ADDR);  
 	servaddr.sin_port = htons(pnum);// 네트워크에서 사용하기 때문에 호스트 바이트오더를 네트워크로 변환한다. 포트번호는 2바이트이다.(s)
 
 	//네트워크 인터페이스와 소켓 결합. bind할 자신의 IP와 PORT번호를 소켓 주소에 설정한다.
