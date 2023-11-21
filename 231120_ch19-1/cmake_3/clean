@@ -1,0 +1,15 @@
+# clean 이라는 파일이 디렉토리에 생성되어 있다면?
+1. make clean을 했을 때 clean 파일이 있네?
+2. clean 파일은 항상 최신이네?
+3. recipe를 실행 안해도 되겠네!
+> make clean 명령을 무시하게 된다.
+#### 실제로 디렉토리에 clean 이라는 파일을 만들어놓고 실행해보면 위와 같이 이미 clean 은 최신이라며 recipe 실행을 거부합니다.
+
+## 이와 같은 상황을 막기 위해 clean을 PHONY라고 등록하면 된다.
+- Phony 는 '가짜의, 허위의' 이라는 뜻입니다.
+
+```shell
+.PHONY: clean
+clean:
+	rm -f $(OBJS) main
+```
