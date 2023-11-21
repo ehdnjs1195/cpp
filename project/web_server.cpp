@@ -44,14 +44,13 @@ int main(int argc, char ** argv){
         clnt_addr_size = sizeof(clnt_addr);
         // 4. 연결 수립. (통신 소켓 생성)
         clnt_sock = accept(serv_sock, (struct sockaddr *)&clnt_addr, (socklen_t *)&clnt_addr_size);
-
-        // g_clnt_socks[g_clnt_count++] = clnt_sock;   
+        g_clnt_socks[g_clnt_count++] = clnt_sock;   
 
         // 5. 데이터 송수신 처리
         char msg[256] = "";	// 송수신에 사용할 메시지 버퍼
         while (recv(clnt_sock, msg, sizeof(msg),0) > 0) {	//메시지를 수신할 때 recv 함수를 사용함. 반환값은 수신한 메시지 길이. 상대가 끊으면 0을 반환함.
             printf("recv:%s\n", msg);
-            send(clnt_sock, msg, sizeof(msg), 0);	// 받은 메시지를 다시 보내는 에코 작용
+            // send(clnt_sock, msg, sizeof(msg), 0);	// 받은 메시지를 다시 보내는 에코 작용
         }
         close(clnt_sock);
     }
