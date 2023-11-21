@@ -28,20 +28,20 @@ int main(int argc, char **argv) {
     if(sock == -1){
         printf("socket error");
     } else {
-        printf("connection success\n");
+        printf("connection success!\n");
     }
 
     memset(&serv_addr, 0, sizeof(serv_addr));
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = inet_addr("127.0.0.1"); // host
-    serv_addr.sin_port = htons(7989);
+    serv_addr.sin_port = htons(8888);
 
 
 
     if(connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) == -1) {
         printf("connect error\n");
     } else {
-        printf("connection success\n");
+        printf("connection success!!\n");
     }
 
     unsigned char msg[100] = {0x01,2,3,4,5,6,1,2,3,4,2,1,2,1,0x0c};  //test msg

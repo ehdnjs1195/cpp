@@ -20,17 +20,21 @@ int main(int argc, char ** argv){
     int clnt_addr_size;
     
     struct sockaddr_in serv_addr;
+    // 1. server socket 생성
     serv_sock = socket(PF_INET, SOCK_STREAM, 0);   //PF_INET: IPv4 | SOCK_STREAM: TCP 통신 | 0을 써주면 앞의 타입을 보고 자동으로 tcp면 tcp로, udp면 udp로 지정해줌.
 
     serv_addr.sin_family = AF_INET;  // 바인드할 때 씀. IPv4를 쓰겠다는 뜻
-    serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-    serv_addr.sin_port = htons(7989);   // port번호
+    serv_addr.sin_addr.s_addr = inet_addr("127.0.0.1");    // TAS IP주소
+    // serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    serv_addr.sin_port = htons(8888);   // port번호
 
+    // 2. IP주소, Port번호와 바인드.
     if(bind(serv_sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) == -1) {  // bind(). -1 반환은 bind 실패.
         printf("bind error\n"); 
     }
 
-    if(listen(serv_sock, 5) == -1) {    // 5는 백로그 큐 크기. listen 대기
+    // 3. 요청 대기.
+    if(listen(serv_sock, 5) == -1) {    // 5는 백로그 큐 크기. listen 대기 큐
         printf("listen error");
     }
 
@@ -38,20 +42,21 @@ int main(int argc, char ** argv){
     int recv_len = 0;
     while(1) {
         clnt_addr_size = sizeof(clnt_addr);
+        // 4. 연결 수립. (통신 소켓 생성)
         clnt_sock = accept(serv_sock, (struct sockaddr *)&clnt_addr, (socklen_t *)&clnt_addr_size);
 
         // g_clnt_socks[g_clnt_count++] = clnt_sock;   
 
-        while(1) {
-            recv_len = read(clnt_sock, buff, 200);
-
-            printf("recv: ");
-            for(int i=0; i<recv_len; i++){
-                printf("%02X ", (unsigned char)buff[i]);
-            }
-            printf("\n");
+        // 5. 데이터 송수신 처리
+        char msg[256] = "";	// 송수신에 사용할 메시지 버퍼
+        while (recv(clnt_sock, msg, sizeof(msg),0) > 0) {	//메시지를 수신할 때 recv 함수를 사용함. 반환값은 수신한 메시지 길이. 상대가 끊으면 0을 반환함.
+            printf("recv:%s\n", msg);
+            send(clnt_sock, msg, sizeof(msg), 0);	// 받은 메시지를 다시 보내는 에코 작용
         }
+        close(clnt_sock);
     }
+    // 6. 연결 해제
+    close(serv_sock);
 }
 
 
