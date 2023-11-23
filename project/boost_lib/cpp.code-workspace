@@ -1,0 +1,28 @@
+{
+	"folders": [
+		{
+			"path": "../.."
+		},
+		{
+			"path": "../../../practice"
+		},
+		{
+			"path": "../../../project"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"iostream": "cpp",
+			"string": "cpp",
+			"ctime": "cpp",
+			"algorithm": "cpp",
+			"cstdlib": "cpp",
+			"memory": "cpp",
+			"functional": "cpp",
+			"thread": "cpp",
+			"vector": "cpp",
+			"*.ipp": "cpp",
+			"random": "cpp"
+		}
+	}
+}

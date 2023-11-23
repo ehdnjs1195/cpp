@@ -11,7 +11,7 @@
             "cppStandard": "gnu++14",
             "intelliSenseMode": "linux-gcc-x64",
             "configurationProvider": "ms-vscode.cmake-tools",
-            "compilerPath": "C:/MinGW/bin/g++.exe"
+            "compilerPath": "/usr/bin/gcc"
         }
     ],
     "version": 4
