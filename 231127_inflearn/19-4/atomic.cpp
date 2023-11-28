@@ -51,26 +51,14 @@ void ex2() {    // 2. mutex lock / lock_guard
             // mtx.lock(); 
             std::lock_guard lock(mtx);  // lock이라는 변수를 현재 스코프 내에서 선언 하였고, 따로 언락이 필요 없음! 언락을 못할 경우를 대비할 수 있다.
             // 락가드는 권장사항임!!
-            shared_memory++;    // atomic 클래스에 ++ 증감 연산자가 따로 오버로딩 되어있음!
-            // shared_memory.fetch_add(1);  //atomic에서 쓰는 함수
+            shared_memory++;  
             // mtx.unlock();   // 예외 처리하는 경우 unlock을 지나칠 수가 있음. 메모리 누수문제 등
 
         }
     };
 
     thread t1 = thread(count_func); // 1000번 더함
-    thread t2 = thread(count_func); // 1000번 더함 => 그럼 2000이 나와야 하는데 안 나오는 경우가 발생함! 
-    /*
-        병렬처리할 때 문제가 발생한다.
-        원인) 작업 과정을 살펴보면
-            1. cpu에서 shared_memory 값을 읽어오고
-            2. cpu안에서 값을 더하고
-            3. 다시 shared_memory를 보내서 값을 덮어 쓰기.
-            => t1이 cpu로 읽어들인 사이에 t2가 이미 그 값을 바꾸었고, t1이 다시 값을 덮어 씌울 때가 발생함. 
-            => 결론적으로 더하기 과정 하나가 사라진 것 처럼 되어버림.
-        해결) 1. atomic : 위에 값을 더하는 일련의 과정을 하나로 묶어버림.
-            2. mutex: lock기능으로 하나의 쓰레드만 접근하도록 함.
-    */
+    thread t2 = thread(count_func); // 1000번 더함
 
     t1.join();
     t2.join();
@@ -89,8 +77,6 @@ void ex3() {    // 3. scoped_lock
             std::scoped_lock lock(mtx);  // 스코프 내에서(중괄호) 벗어나느 순간 자동으로 락이 풀림. 사용 권장됨!
 
             shared_memory++;    
-
-
         }
     };
 

@@ -72,7 +72,7 @@ void mem_fn_code() {    // 개선.
 
     vector<int> size_vec(4);
     transform(container.begin(), container.end(), size_vec.begin(),
-                std::mem_fn(&vector<int>::size));   // size함수를 전달
+                std::mem_fn(&vector<int>::size));   // size함수를 전달. mem_fn함수는 std::function 객체를 생성해서 반환한다.
     for (auto itr = size_vec.begin(); itr != size_vec.end(); ++itr) {
         std::cout << "벡터 크기 :: " << *itr << std::endl;
     }
