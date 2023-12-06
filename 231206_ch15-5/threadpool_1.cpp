@@ -38,7 +38,7 @@ ThreadPool::ThreadPool(size_t num_threads)
     : num_threads_(num_threads), stop_all(false) {
   worker_threads_.reserve(num_threads_);
   for (size_t i = 0; i < num_threads_; ++i) {
-    worker_threads_.emplace_back([this]() { this->WorkerThread(); });
+    worker_threads_.emplace_back([this]() { this->WorkerThread(); }); // emplace_back 객체를 직접 생성하여 추가함.
   }
 }
 
@@ -69,7 +69,7 @@ ThreadPool::~ThreadPool() {
   }
 }
 
-void ThreadPool::EnqueueJob(std::function<void()> job) {
+void ThreadPool::EnqueueJob(std::function<void()> job) {  // 함수를 인자로 받음.
   if (stop_all) {
     throw std::runtime_error("ThreadPool 사용 중지됨");
   }
