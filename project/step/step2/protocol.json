@@ -1,0 +1,95 @@
+{
+    "InterID": 353,
+    "Plan": [
+        {
+            "TOD": 1,
+            "Level": [
+                {
+                    "ID" : 1,
+                    "time":4,
+                    "phase":[
+                        {
+                            "num":1,
+                            "RingA":98,
+                            "RingB":98
+                        },
+                        {
+                            "num":2,
+                            "RingA":27,
+                            "RingB":27
+                        },
+                        {
+                            "num":3,
+                            "RingA":35,
+                            "RingB":35
+                        }
+                    ]
+                },
+                {
+                    "ID" : 2,
+                    "time":6,
+                    "phase":[
+                        {
+                            "num":1,
+                            "RingA":88,
+                            "RingB":88
+                        },
+                        {
+                            "num":2,
+                            "RingA":27,
+                            "RingB":27
+                        },
+                        {
+                            "num":3,
+                            "RingA":35,
+                            "RingB":35
+                        }
+                    ]
+                },
+                {
+                    "ID" : 3,
+                    "time":6,
+                    "phase":[
+                        {
+                            "num":1,
+                            "RingA":98,
+                            "RingB":98
+                        },
+                        {
+                            "num":2,
+                            "RingA":27,
+                            "RingB":27
+                        },
+                        {
+                            "num":3,
+                            "RingA":35,
+                            "RingB":35
+                        }
+                    ]
+                },
+                {
+                    "ID" : 4,
+                    "time":8,
+                    "phase":[
+                        {
+                            "num":1,
+                            "RingA":88,
+                            "RingB":88
+                        },
+                        {
+                            "num":2,
+                            "RingA":27,
+                            "RingB":27
+                        },
+                        {
+                            "num":3,
+                            "RingA":25,
+                            "RingB":25
+                        }
+                    ]
+                }
+            ]
+
+        }
+    ]
+}
