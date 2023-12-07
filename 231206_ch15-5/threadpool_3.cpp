@@ -74,7 +74,7 @@ ThreadPool::~ThreadPool() {
 
 template <class F, class... Args>
 std::future<typename std::result_of<F(Args...)>::type> ThreadPool::EnqueueJob(
-  F&& f, Args&&... args) {  // 우측값 레퍼런스로 바꾸고,
+  F&& f, Args&&... args) {  // 완벽한 전달을 위해 우측값 레퍼런스로 바꾸고,
   if (stop_all) {
     throw std::runtime_error("ThreadPool 사용 중지됨");
   }
@@ -82,6 +82,7 @@ std::future<typename std::result_of<F(Args...)>::type> ThreadPool::EnqueueJob(
   using return_type = typename std::result_of<F(Args...)>::type;
   auto job = std::make_shared<std::packaged_task<return_type()>>(
     std::bind(std::forward<F>(f), std::forward<Args>(args)...));    // forward로 인자를 전달해주어 완벽한 전달을 하게 해준다. => 불필요한 복사를 막기위함.
+    // 완벽한 전달(Perfect Forwarding)은 C++에서 함수에 전달된 인자를 해당 함수가 다른 함수로 전달할 때, 그 인자의 원본 레퍼런스나 값의 레퍼런스를 그대로 유지하면서 전달하는 것을 의미합니다. 
   std::future<return_type> job_result_future = job->get_future();
   {
     std::lock_guard<std::mutex> lock(m_job_q_);

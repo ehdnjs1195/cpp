@@ -6,6 +6,7 @@
 #include <queue>
 #include <thread>
 #include <vector>
+#include <iostream>
 
 namespace ThreadPool {
 class ThreadPool {
@@ -63,10 +64,13 @@ void ThreadPool::WorkerThread() {
 ThreadPool::~ThreadPool() {
   stop_all = true;
   cv_job_q_.notify_all();
-
+  std::cout << "소멸자 호출" << std::endl;
   for (auto& t : worker_threads_) {
+    std::cout << t.get_id() << "번 쓰레드 join 완료" << std::endl;
     t.join();
   }
+  std::cout << "쓰레드 전체 join 완료" << std::endl;
+
 }
 
 void ThreadPool::EnqueueJob(std::function<void()> job) {  // 함수를 인자로 받음.
@@ -93,5 +97,7 @@ int main() {
 
   for (int i = 0; i < 10; i++) {
     pool.EnqueueJob([i]() { work(i % 3 + 1, i); });
+    std::cout << i << "번" << " pool에 job 투입" << std::endl;
+
   }
 }
