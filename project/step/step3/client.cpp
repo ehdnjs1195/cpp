@@ -51,6 +51,7 @@ void loop_phase(){
     int phase_level=0;  // 현시 저장 변수
     bool is_phase_known_flag = false;   // 현재 현시를 아는지
     int phase_size = db_phase_time.size() / db_level_id.size(); // phase 개수
+    db_level_time.push_back(db_level_time[0]);  // 마지막 원소로 처음 level시간을 넣어주기
    
     std::vector<int> part_phase_time;   // 현시를 파트별로 합으로 나타낸 벡터
     int sum=0;
@@ -71,15 +72,14 @@ void loop_phase(){
         std::cout << "hour: " << curr_hour << " | min: " << curr_min << " | sec: " << curr_sec << std::endl;
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));   // 1초
 
-        for(int i=0; i<level_size; i++){    // level 1~3
-            if(i==level_size-1) break;  // 마지막 level이 되면 실행 안되도록
+        for(int i=0; i<level_size-1; i++){    // level 1~4
             if(db_level_time[i] <= curr_hour && db_level_time[i+1] > curr_hour){    // 구간이 어딘지 확인
                 int sec = (curr_hour - db_level_time[i]) * 60 * 60 
                             + curr_min * 60
                             + curr_sec;                 // 구간내 시간을 sec로 변환
-                if(seqNo == 256) seqNo = 0; // seqNo는 0부터 255까지
+                if(seqNo == 256) seqNo = 0;             // seqNo는 0부터 255까지
                 phase = (sec % db_level_cycle[i])+1;    // 구간 내에서의 시간, 곧 phase
-                if(!is_phase_known_flag){       // 처음 phase 찾기
+                if(!is_phase_known_flag){               // 처음 phase 찾기
                     for(int j=0; j<phase_size; j++){
                         if(phase >= part_phase_time[j+(db_level_id[i]-1) * phase_size]){
                             phase_level = j+1;
@@ -92,28 +92,6 @@ void loop_phase(){
                     phase_level++;
                     std::async([&](){make_packet(prot.InterID, seqNo++, (phase_level % phase_size)+ 1);}).get();        // 정해진 현시가 되었을 때 비동기적으로 패킷정보 전달
                 }
-            }
-        }
-        if(db_level_id.back() == level_size){ // 마지막 level
-            std::cout << "last level part" << std::endl;
-            int index = level_size - 1;
-            int sec = (curr_hour - db_level_time[index]) * 60 * 60 
-                        + curr_min * 60
-                        + curr_sec;                 // 구간내 시간을 sec로 변환
-            if(seqNo == 256) seqNo = 0;
-            phase = (sec % db_level_cycle[index])+1;    // 구간 내에서의 시간, 곧 phase
-            if(!is_phase_known_flag){       // 처음 phase 찾기
-                for(int j=0; j<phase_size; j++){
-                    if(phase >= part_phase_time[j+(db_level_id[index]-1) * phase_size]){
-                        phase_level = j+1;
-                    }
-                }
-                is_phase_known_flag = true;
-            }
-            if(phase == part_phase_time[(phase_level%phase_size) + phase_size*(db_level_id[index]-1)]) {
-                std::cout << "last level part" << std::endl;
-                phase_level++;
-                std::async([&](){make_packet(prot.InterID, seqNo++, (phase_level % phase_size)+ 1);}).get();        // 정해진 현시가 되었을 때 비동기적으로 패킷정보 전달
             }
         }
     }
