@@ -9,7 +9,7 @@
 #include <boost/property_tree/json_parser.hpp>
 // 봉석님 테스트 서버 10.30.8.83 | 12001
 #define SERVER_IP "127.0.0.1"
-#define SERVER_PORT 8888
+#define SERVER_PORT 8889
 
 using boost::asio::ip::udp;
 struct protocol{
@@ -21,7 +21,7 @@ struct protocol{
     std::vector<int> level_id;
 };
 
-void make_packet(int interID, int seqNo, int phase);
+void make_packet(int interID, int seqNo, int opcode, int phase);
 void send_packet(std::vector<char> packet);
 void loop_phase();
 void get_phase_data(protocol& prot);
@@ -52,6 +52,9 @@ void loop_phase(){
     bool is_phase_known_flag = false;   // 현재 현시를 아는지
     int phase_size = db_phase_time.size() / db_level_id.size(); // phase 개수
     db_level_time.push_back(db_level_time[0]);  // 마지막 원소로 처음 level시간을 넣어주기
+    int opcode = 0; //opcode
+    bool cycle_over_flag = false;
+    bool is_last_level_time= false;   
    
     std::vector<int> part_phase_time;   // 현시를 파트별로 합으로 나타낸 벡터
     int sum=0;
@@ -72,8 +75,9 @@ void loop_phase(){
         std::cout << "hour: " << curr_hour << " | min: " << curr_min << " | sec: " << curr_sec << std::endl;
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));   // 1초
 
-        for(int i=0; i<level_size-1; i++){    // level 1~4
-            if(db_level_time[i] <= curr_hour && db_level_time[i+1] > curr_hour){    // 구간이 어딘지 확인
+        for(int i=0; i<level_size; i++){    // level 1~4
+            if(i == level_size-1) is_last_level_time = true;
+            if(db_level_time[i] <= curr_hour && (db_level_time[i+1] > curr_hour || is_last_level_time)){    // 구간이 어딘지 확인
                 int sec = (curr_hour - db_level_time[i]) * 60 * 60 
                             + curr_min * 60
                             + curr_sec;                 // 구간내 시간을 sec로 변환
@@ -87,11 +91,20 @@ void loop_phase(){
                     }
                     is_phase_known_flag = true;
                 }
+                
                 std::cout << "phase: " << phase << " | part_phase_time: " << part_phase_time[(phase_level%phase_size) + 3*(db_level_id[i]-1)] << " | phase_level: " << phase_level % 3 + 1 << " | secNo: " << seqNo <<std::endl;
                 if(phase == part_phase_time[(phase_level%phase_size) + phase_size*(db_level_id[i]-1)]) {
                     phase_level++;
-                    std::async([&](){make_packet(prot.InterID, seqNo++, (phase_level % phase_size)+ 1);}).get();        // 정해진 현시가 되었을 때 비동기적으로 패킷정보 전달
+                    if(phase_level%phase_size == 0) { 
+                        opcode = 0x24;                  // 사이클이 끝났을 때
+                        std::async([&](){make_packet(prot.InterID, seqNo++, opcode, (phase_level % phase_size)+ 1);}).get();
+                        opcode = 0x22;                  // 사이클이 시작할 때
+                        std::async([&](){make_packet(prot.InterID, seqNo++, opcode, (phase_level % phase_size)+ 1);}).get();
+                    }
+                    opcode = 0x14;
+                    std::async([&](){make_packet(prot.InterID, seqNo++, opcode, (phase_level % phase_size)+ 1);}).get();        // 정해진 현시가 되었을 때 비동기적으로 패킷정보 전달
                 }
+                is_last_level_time = false;
             }
         }
     }
@@ -131,15 +144,16 @@ void get_phase_data(protocol& prot){
         }
     }
 }
-void make_packet(int interID, int seqNo, int phase){
+void make_packet(int interID, int seqNo, int opcode, int phase){    // 전달 받은 데이터로 패킷 형성
     std::vector<char> packet;
     // 1~2 interID
     packet.push_back((interID >> 8) & 0xFF);    
     packet.push_back(interID & 0xFF);
     // 3~4 size
+    packet.push_back(0x00);
     packet.push_back(0x0c);
     // 5 OPCODE
-    packet.push_back(0x14);
+    packet.push_back(opcode & 0xFF);
     // 6 seq No
     packet.push_back(seqNo & 0xFF);
     // 7 phase info
@@ -156,10 +170,9 @@ void make_packet(int interID, int seqNo, int phase){
     packet.push_back(check_lrc);
 
     send_packet(packet);
-    
 }
 
-void send_packet(std::vector<char> packet){
+void send_packet(std::vector<char> packet){ // packet 전송 
     try{
         boost::asio::io_service io_service;
         udp::socket socket(io_service, udp::v4());

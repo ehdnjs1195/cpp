@@ -1,5 +1,5 @@
 {
-    "InterID": 353,
+    "InterID": 3,
     "Plan": [
         {
             "TOD": 1,
@@ -72,7 +72,7 @@
                 },
                 {
                     "ID" : 4,
-                    "time":22,
+                    "time":17,
                     "cycle":140,
                     "phase":[
                         {

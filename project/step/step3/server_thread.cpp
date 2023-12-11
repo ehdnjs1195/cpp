@@ -4,7 +4,7 @@
 #include <thread>
 #include <queue>
 // #include <mutex>
-#define PORT_NUM 8888
+#define PORT_NUM 8889
 #define THREAD_SLEEP_TIME_MS 100
 
 using boost::asio::ip::udp;
