@@ -19,7 +19,8 @@ struct protocol{
     std::vector<int> phase_time;
     std::vector<int> pahse_level;
     std::vector<int> level_cycle;
-    std::vector<int> level_time;
+    std::vector<int> level_hour;
+    std::vector<int> level_min;
     std::vector<int> level_id;
 };
 
@@ -44,7 +45,8 @@ void loop_phase(){
     protocol prot;
     get_phase_data(prot);
     // data of protocol database 
-    std::vector<int> db_level_time = prot.level_time;
+    std::vector<int> db_level_hour = prot.level_hour;
+    std::vector<int> db_level_min = prot.level_min;
     std::vector<int> db_phase_time = prot.phase_time;
     std::vector<int> db_level_cycle = prot.level_cycle;
     std::vector<int> db_level_id = prot.level_id;
@@ -53,7 +55,7 @@ void loop_phase(){
     int phase_level=0;  // 현시 저장 변수
     bool is_first_phase_flag = false;   // 현재 현시를 아는지
     int phase_size = db_phase_time.size() / db_level_id.size(); // phase 개수
-    db_level_time.push_back(db_level_time[0]);  // 마지막 원소로 처음 level시간을 넣어주기
+    db_level_hour.push_back(db_level_hour[0]);  // 마지막 원소로 처음 level시간을 넣어주기
     int opcode = 0; //opcode
     bool cycle_over_flag = false;
     bool is_last_level_time_flag= false;   
@@ -83,10 +85,14 @@ void loop_phase(){
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));   // 1초
 
         for(int i=0; i<level_size; i++){    // level 1~4
-            // std::cout << std::boolalpha << "i == level_size-1: " << (i == level_size-1) << std::endl;
             if(i == level_size-1) is_last_level_time_flag = true;    // 마지막 수준이라면
-            if(db_level_time[i] <= curr_hour && (db_level_time[i+1] > curr_hour || is_last_level_time_flag)){    // level 구간 확인
-                int sec = (curr_hour - db_level_time[i]) * 60 * 60 
+            
+            // 수준에 따른 hour, min을 반영할 수 있도록 계산
+            int prev_time = db_level_hour[i] * 60 + db_level_min[i];
+            int post_time = db_level_hour[i+1] * 60 + db_level_min[i+1];
+            int curr_time = curr_hour * 60 + curr_min;
+            if(prev_time <= curr_time && (post_time > curr_time || is_last_level_time_flag)){    // level 구간 확인
+                int sec = (curr_hour - db_level_hour[i]) * 60 * 60 
                             + curr_min * 60
                             + curr_sec;                 // 구간내 시간을 sec로 변환
                 if(seqNo == 256) seqNo = 0;             // seqNo는 0부터 255까지
@@ -131,9 +137,12 @@ void get_phase_data(protocol& prot){
     for (const auto &plan : props.get_child("Plan")) {
         // Level 배열 순회
         for (const auto &level : plan.second.get_child("Level")) {
-            // level_time
-            int time = level.second.get<int>("time");
-            prot.level_time.push_back(time);
+            // level_hour
+            int hour = level.second.get<int>("hour");
+            prot.level_hour.push_back(hour);
+            // level_min
+            int min = level.second.get<int>("min");
+            prot.level_min.push_back(min);
             // level_cycle
             int cycle = level.second.get<int>("cycle");
             prot.level_cycle.push_back(cycle);

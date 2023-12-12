@@ -6,7 +6,8 @@
             "Level": [
                 {
                     "ID" : 1,
-                    "time":6,
+                    "hour":6,
+                    "min":0,
                     "cycle":160,
                     "phase":[
                         {
@@ -28,7 +29,8 @@
                 },
                 {
                     "ID" : 2,
-                    "time":10,
+                    "hour":10,
+                    "min":0,
                     "cycle":150,
                     "phase":[
                         {
@@ -50,7 +52,8 @@
                 },
                 {
                     "ID" : 3,
-                    "time":16,
+                    "hour":16,
+                    "min":0,
                     "cycle":160,
                     "phase":[
                         {
@@ -72,7 +75,8 @@
                 },
                 {
                     "ID" : 4,
-                    "time":22,
+                    "hour":22,
+                    "min":0,
                     "cycle":140,
                     "phase":[
                         {
