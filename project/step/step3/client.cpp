@@ -111,12 +111,12 @@ void loop_phase(){
                     phase_level++;
                     if(phase_level%phase_size == 0) { 
                         opcode = 0x24;                  // 사이클이 끝났을 때
-                        std::async([&](){make_packet(prot.InterID, seqNo++, opcode, (phase_level)+ 1);}).get();
+                        std::async([&](){make_packet(prot.InterID, seqNo++, opcode, phase_level);}).get();
                         opcode = 0x22;                  // 사이클이 시작할 때
-                        std::async([&](){make_packet(prot.InterID, seqNo++, opcode, (phase_level)+ 1);}).get();
+                        std::async([&](){make_packet(prot.InterID, seqNo++, opcode, phase_level);}).get();
                     }
                     opcode = 0x14;
-                    std::async([&](){make_packet(prot.InterID, seqNo++, opcode, (phase_level)+ 1);}).get();        // 정해진 현시가 되었을 때 비동기적으로 패킷정보 전달
+                    std::async([&](){make_packet(prot.InterID, seqNo++, opcode, phase_level);}).get();        // 정해진 현시가 되었을 때 비동기적으로 패킷정보 전달
                 }
                 if(phase_level == phase_size) phase_level = 0;  //phase_level 초기화
             }
