@@ -1,5 +1,13 @@
 #include <iostream>
 int getResult(){return 10*10;};
+void doSomething(int &lref){
+    // L-value는 move를 쓸 수 없다.
+    std::cout << "L-value ref" << std::endl;
+}
+void doSomething(int &&rref){
+    // rref를 move해서 가져올 수 있다.
+    std::cout << "R-value ref" << std::endl;
+}
 int main() {
     int x = 3;
     const int cx = 6;
@@ -27,12 +35,15 @@ int main() {
 
     // 헷갈릴 수 있는 점.
     std::cout << rr3 << std::endl;
-    rr3 = 10;   // 없어질 값이라더니 값을 바꿀 수가 있어??
+    rr3 = 10;   // 없어질 값이라더니 값을 바꿀 수가 있어?? yes
     std::cout << rr3 << std::endl;
 
     // const int &&rr4 = x;     // Modifiable l-value
     // const int &&rr5 = cx;    // Non-modifiable l-value
     const int &&rr6 = 5;        // R-value                
 
+    doSomething(x);             // L-value
+    doSomething(5);             // R-value
+    doSomething(getResult());   // R-value
     
 }
