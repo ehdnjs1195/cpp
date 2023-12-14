@@ -18,8 +18,8 @@ int main()
 
     {
         AutoPtr<Resource> main_res;
-        main_res = generateResource();
-    }
+        main_res = generateResource();  // renerateResource()는 R-value이므로 deep copy를 하기보다 shallow copy를 하는 것이 더 효율적이다 => move sematics.
+    }   // scope를 벗어나면서 ptr가 해제됨.
 
     cout.rdbuf(orig_buf);   // cout은 시간이 오래걸리는 작업임. 이것을 제어하는 문장.
     timer.elapsed();
