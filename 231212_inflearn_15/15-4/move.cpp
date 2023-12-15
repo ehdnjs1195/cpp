@@ -1,0 +1,1 @@
+// std::move함수: 사용자가 move semantics를 사용하고자 할 때 쓸 수 있는 함수. 
