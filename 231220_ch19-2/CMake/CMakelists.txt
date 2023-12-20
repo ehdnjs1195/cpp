@@ -1,0 +1,14 @@
+# CMake 프로그램의 최소 버전    (필수. 1)
+cmake_minimum_required(VERSION 3.11)
+
+# 프로젝트 정보                 (필수. 2)
+project(
+  ModooCode                     # 프로젝트 이름
+  VERSION 0.1                   # 버전
+  DESCRIPTION "예제 프로젝트"    # 설명
+  LANGUAGES CXX)                # CXX: C++
+
+add_executable (program main.cc)
+# cmake 실행할 땐 build directory에서 "cmake .." 를 통해 실행함. => CMakeLists.txt가 부모 디렉토리에 있으므로 ..를 붙임
+# cmake를 실행함으로써 실행파일을 얻을 수 있는 makefile을 얻음.
+# make를 실행하여 실행파일을 얻을 수 있음.
