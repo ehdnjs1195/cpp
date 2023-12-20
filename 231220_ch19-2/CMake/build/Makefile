@@ -129,6 +129,30 @@ program/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/program.dir/build.make CMakeFiles/program.dir/build
 .PHONY : program/fast
 
+foo.o: foo.cc.o
+.PHONY : foo.o
+
+# target to build an object file
+foo.cc.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/program.dir/build.make CMakeFiles/program.dir/foo.cc.o
+.PHONY : foo.cc.o
+
+foo.i: foo.cc.i
+.PHONY : foo.i
+
+# target to preprocess a source file
+foo.cc.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/program.dir/build.make CMakeFiles/program.dir/foo.cc.i
+.PHONY : foo.cc.i
+
+foo.s: foo.cc.s
+.PHONY : foo.s
+
+# target to generate assembly for a file
+foo.cc.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/program.dir/build.make CMakeFiles/program.dir/foo.cc.s
+.PHONY : foo.cc.s
+
 main.o: main.cc.o
 .PHONY : main.o
 
@@ -162,6 +186,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... program"
+	@echo "... foo.o"
+	@echo "... foo.i"
+	@echo "... foo.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

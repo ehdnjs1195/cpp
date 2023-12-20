@@ -1,6 +1,8 @@
 #include <iostream>
 
+#include "foo.h"
+
 int main() {
-  std::cout << "Hello, CMake" << std::endl;
+  std::cout << "Foo : " << foo() << std::endl;
   return 0;
 }

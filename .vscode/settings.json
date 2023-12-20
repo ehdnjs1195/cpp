@@ -96,6 +96,19 @@
         "variant": "cpp",
         "coroutine": "cpp",
         "forward_list": "cpp",
-        "csetjmp": "cpp"
+        "csetjmp": "cpp",
+        "barrier": "cpp",
+        "cfenv": "cpp",
+        "execution": "cpp",
+        "filesystem": "cpp",
+        "latch": "cpp",
+        "numbers": "cpp",
+        "regex": "cpp",
+        "scoped_allocator": "cpp",
+        "semaphore": "cpp",
+        "stdfloat": "cpp",
+        "strstream": "cpp",
+        "syncstream": "cpp",
+        "valarray": "cpp"
     }
 }

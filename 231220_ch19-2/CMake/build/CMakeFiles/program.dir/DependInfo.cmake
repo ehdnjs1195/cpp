@@ -8,6 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
+  "/mnt/c/git_repository/cpp/231220_ch19-2/CMake/foo.cc" "CMakeFiles/program.dir/foo.cc.o" "gcc" "CMakeFiles/program.dir/foo.cc.o.d"
   "/mnt/c/git_repository/cpp/231220_ch19-2/CMake/main.cc" "CMakeFiles/program.dir/main.cc.o" "gcc" "CMakeFiles/program.dir/main.cc.o.d"
   )
 
