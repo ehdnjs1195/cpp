@@ -12,3 +12,5 @@ add_executable (program main.cc foo.cc) # program 이름으로 실행파일 생�
 # cmake 실행할 땐 build directory에서 "cmake .." 를 통해 실행함. => CMakeLists.txt가 부모 디렉토리에 있으므로 ..를 붙임
 # cmake를 실행함으로써 실행파일을 얻을 수 있는 makefile을 얻음.
 # make를 실행하여 실행파일을 얻을 수 있음.
+
+target_compile_options(program PUBLIC -Wall -Werror) #program 을 빌드할 때 컴파일 옵션으로 -Wall (모든 경고 표시) 과 -Werror (경고는 컴파일 오류로 간주) 을 준다는 의미 입니다.
