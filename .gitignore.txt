@@ -50,3 +50,6 @@
 .ionide
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,c++
+
+# 빌드 파일
+build/*
